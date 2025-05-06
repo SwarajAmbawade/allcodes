@@ -1,0 +1,155 @@
+//Swaraj Ambawade 23CO008
+//hashing
+//1. separate chaining (linkedlist is used) 
+//2. linear probing without replacement (array is used)
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node {
+public:
+    string name;
+    int tele;
+    Node* next;
+
+    Node(string nm, int t) {
+        name = nm;
+        tele = t;
+        next = NULL;
+    }
+};
+
+class HashSeparateChaining {
+    Node* hashtable[10] = {NULL};
+
+public:
+    void insert(string name, int tele) {
+        Node* p = new Node(name, tele);
+        int loc = tele % 10;
+        if (hashtable[loc] == NULL) {
+            hashtable[loc] = p;
+        } else {
+            Node* temp = hashtable[loc];
+            while (temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = p;
+        }
+    }
+
+    bool search(int key) {
+        int loc = key % 10;
+        Node* temp = hashtable[loc];
+        while (temp != NULL) {
+            if (temp->tele == key) {
+                cout << "Name: " << temp->name << ", Telephone: " << temp->tele << endl;
+                return true;
+            }
+            temp = temp->next;
+        }
+        return false;
+    }
+
+    void display() {
+        for (int i = 0; i < 10; i++) {
+            Node* temp = hashtable[i];
+            while (temp != NULL) {
+                cout << "Name: " << temp->name << " , Telephone: " << temp->tele << endl;
+                temp = temp->next;
+            }
+        }
+    }
+};
+
+class HashLinearProbing {
+    string names[10];
+    int telephone[10];
+    bool occupied[10] = {false};
+
+public:
+    void insert(string name, int tele) {
+        int loc = tele % 10;
+        int originalLoc = loc;
+
+        while (occupied[loc]) {
+            loc = (loc + 1) % 10;
+            if (loc == originalLoc) {
+                cout << "Hash Table is Full!" << endl;
+                return;
+            }
+        }
+        names[loc] = name;
+        telephone[loc] = tele;
+        occupied[loc] = true;
+    }
+
+    bool search(int key) {
+        int loc = key % 10;
+        int originalLoc = loc;
+
+        while (occupied[loc]) {
+            if (telephone[loc] == key) {
+                cout << "Name: " << names[loc] << ", Telephone: " << telephone[loc] << endl;
+                return true;
+            }
+            loc = (loc + 1) % 10;
+            if (loc == originalLoc) break;
+        }
+        return false;
+    }
+
+    void display() {
+        for (int i = 0; i < 10; i++) {
+            if (occupied[i]) {
+                cout << "Name: " << names[i] << " , Telephone: " << telephone[i] << endl;
+            }
+        }
+    }
+};
+
+int main() {
+    HashSeparateChaining hsc;
+    HashLinearProbing hlp;
+
+    int choice;
+    cout << "Choose Hashing Method:\n1. Separate Chaining\n2. Linear Probing without Replacement\nEnter your choice: ";
+    cin >> choice;
+
+    char ch;
+    while (true) {
+        cout << "\nOperations:\n1. Insert an element\n2. Search an element\n3. Display table\n4. Exit\nEnter your choice: ";
+        cin >> ch;
+
+        if (ch == '1') {  // Insert
+            cout << "Enter Name: ";
+            string name;
+            cin >> name;
+            cout << "Enter Telephone number: ";
+            int num;
+            cin >> num;
+
+            if (choice == 1)
+                hsc.insert(name, num);
+            else
+                hlp.insert(name, num);
+        } else if (ch == '2') {  // Search
+            cout << "Enter Telephone number to search: ";
+            int n;
+            cin >> n;
+
+            bool found = (choice == 1) ? hsc.search(n) : hlp.search(n);
+            if (!found)
+                cout << "Number not found." << endl;
+        } else if (ch == '3') {  // Display
+            if (choice == 1)
+                hsc.display();
+            else
+                hlp.display();
+        } else if (ch == '4') {  // Exit
+            break;
+        } else {
+            cout << "Invalid Choice" << endl;
+        }
+    }
+    return 0;
+}
