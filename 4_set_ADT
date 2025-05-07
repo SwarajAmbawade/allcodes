@@ -1,0 +1,343 @@
+// SWARAJ Ambawade 23CO008
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Iterator {
+    int *array;   
+    int size; 
+    int index;
+	
+	public:
+    Iterator(int *arr, int sz) : array(arr), size(sz), index(0) {}
+
+    bool hasNext() const {
+        return index < size;
+    }
+
+    int next() {
+        if (hasNext()) {
+            return array[index++];
+        } else {
+            cout<<"No more elements in the iterator";
+        }
+    }
+    void reset() {
+        index = 0;
+    }
+};
+
+class set {
+    int a[5], b[5]; // Array for list 1 and list 2
+    int c[10]; //interesection list
+    int d[10]; //union
+    int sizeA = 0, sizeB = 0; 
+
+public:
+    // Add elements to the list
+//    noele means number of element
+    void add(int noele, int flag) { 
+    	
+        for (int i = 0; i < noele; ) {
+            int ele;
+            cout << "Enter element: ";
+            cin >> ele;
+            
+            bool sameflag  = true;
+            
+            if (flag == 0) {
+            	for ( int j= 0 ; j<sizeA ; j++) {
+            		if ( a[j] == ele ) {
+            			cout<<"\t*Same element cannot be added*"<<endl;
+            			sameflag = false;
+            			break;
+					}
+				}
+				if (sameflag) {
+					a[sizeA] = ele;
+                	sizeA++;
+                	i++;
+				}
+            } else {
+                for ( int j= 0 ; j<sizeB ; j++) {
+            		if ( b[j] == ele ) {
+            			cout<<"\t*Same element cannot be added!!!*"<<endl;
+            			sameflag = false;
+            			break;
+					}
+				}
+				if (sameflag) {
+					b[sizeB] = ele;
+                	sizeB++;
+                	i++;
+				}
+            }
+        }
+    }
+
+    // Remove 
+    void remove(int &n, int choice, int element) {
+        int *array = (choice == 1) ? a : b;
+        int &currentSize = (choice == 1) ? sizeA : sizeB;
+        bool found = false;
+
+        for (int i = 0; i < currentSize; i++) {
+            if (array[i] == element) {
+                found = true;
+                for (int j = i; j < currentSize - 1; j++) {
+                    array[j] = array[j + 1]; 
+                }
+                currentSize--;
+                break;
+            }
+        }
+        if (found) {
+            cout << "Element " << element << " removed successfully.\n";
+        } else {
+            cout << "Element " << element << " not found in the list.\n";
+        }
+    }
+
+    void find(int list_choice, int felement) {                                                  
+        int *array = (list_choice == 1) ? a : b;
+        int size = (list_choice == 1) ? sizeA : sizeB;
+		bool flag = false;
+        for (int i = 0; i < size; i++) {
+            if (array[i] == felement) {
+                cout << "Element found at index " << i << " in the list.\n";
+                flag = true;
+            }
+        }
+        if (flag==false) {
+        	cout << "The element is not present in the list.\n";	
+		}        
+    }
+
+    void size(int list_choice) {
+        if (list_choice == 1) {
+            cout << "Size of list 1: " << sizeA << endl;
+        } else if (list_choice == 2) {
+            cout << "Size of list 2: " << sizeB << endl;
+        } else {
+            cout << "Invalid list choice!\n";
+        }
+    }
+    
+    void intersection(){
+    	int k=0;
+    	for (int i=0; i<sizeA; i++) {
+    		for (int j=0; j<sizeB; j++){
+    			if (a[i] == b[j]) {
+    				
+    				bool alreadyinC = false;
+    				for (int x=0; x<k; x++) {
+    					if (c[x] == a[i]) {
+    						alreadyinC = true;
+    						break;
+						}
+					}
+					if (!alreadyinC) {
+						c[k] =a[i];
+						k++;
+					}
+				}
+			}
+		}
+		cout << "The intersection of list 1 and list 2 is :";
+    	for (int i = 0; i < k; i++) {
+        	cout << c[i] << " ";
+    	}
+    	cout << endl;
+	}
+	
+	void unnion() {
+		int v=0; //index for union list
+		
+		for (int i=0; i<sizeA; i++) {
+			d[v] = a[i];
+			v++;
+		}
+		
+		for (int i=0; i<sizeB; i++) {
+			bool alreadyinD = false;
+			for (int x=0; x<v; x++) {
+				if (b[i] == d[x]) {
+					alreadyinD = true;
+					break;
+				}
+			}
+			if (!alreadyinD) {
+				d[v] = b[i];
+				v++;
+			}
+		}
+		cout<< "The union of list 1 and list 2 is :";
+    	for (int i = 0; i < v; i++) {
+        	cout<< d[i] << " ";
+    	}
+    	cout << endl;	
+	}
+	
+	void difference() {
+		int diffA[5];
+		int indexA = 0;
+		for (int i=0; i<sizeA; i++) {
+			
+			bool foundinB = false;
+			for (int j=0; j<sizeB; j++) {
+				if (a[i] == b[j]) {
+					foundinB = true;
+					break;
+				}
+			}
+			if (!foundinB) {
+				diffA[indexA] = a[i];
+				indexA++;
+			}
+		}
+		if (indexA==0) {
+			cout<<"The difference is = {}";
+		}
+		else {
+			cout<<"The elements after difference are { ";
+			for (int i=0; i < indexA; i++) {
+				cout<<diffA[i]<<" ";
+			}
+			cout<<"}";			
+		}
+
+	}
+
+	void subset() {
+	    bool isSubset = true;
+	    for (int i = 0; i < sizeA; i++) {
+	        bool foundInB = false;
+	
+	        for (int j = 0; j < sizeB; j++) {
+	            if (a[i] == b[j]) {
+	                foundInB = true;
+	                break;
+	            }
+	        }
+	        if (!foundInB) {
+	            isSubset = false;
+	            break;
+	        }
+	    }
+	    if (isSubset) {
+	        cout << "Set A is a subset of Set B." << endl;
+	    } else {
+	        cout << "Set A is NOT a subset of Set B." << endl;
+	    }
+	}
+
+    void display(int choice) {
+        int size = (choice == 1) ? sizeA : sizeB;
+        int *array = (choice == 1) ? a : b;
+
+        Iterator it(array, size);
+        while (it.hasNext()) {
+            cout << it.next() << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    int choice, element, list_choice, felement, n, m;
+    string ch;
+    set p;
+
+    cout << "Enter number of elements to add to each list: ";
+    cin >> n;
+    cout << "\nAdd elements to list 1 (each element entered must be unique as it's a set'):"<<endl;
+    p.add(n, 0);
+
+    cout << "\nEnter number of elements to add to each list: ";
+    cin >> m;
+    cout << "\nAdd elements to list 2 (each element entered must be unique as it's a set'):"<<endl;
+    p.add(m, 1);
+
+    do {
+        cout<<"\nMenu:";
+        cout<<"\n1. Display list 1";
+        cout<<"\n2. Display list 2";
+        cout<<"\n3. Remove element";
+        cout<<"\n4. Find element";
+        cout<<"\n5. Find size of list";
+        cout<<"\n6. To find A intersection B";
+        cout<<"\n7. To find A union B";
+        cout<<"\n8. To find difference A-B";
+        cout<<"\n9. To check if A is subset of B";
+        cout<<"\n10. Exit";
+        cout<<"\nEnter your choice: ";
+        cin>> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "List 1 elements are: ";
+                p.display(1);
+                break;
+
+            case 2:
+                cout << "List 2 elements are: ";
+                p.display(2);
+                break;
+
+            case 3:
+                cout << "Enter list number (1 or 2): ";
+                cin >> list_choice;
+                cout << "Enter element to remove: ";
+                cin >> element;
+                p.remove(n, list_choice, element);
+                break;
+
+            case 4:
+                cout << "Enter list number to search (1 or 2): ";
+                cin >> list_choice;
+                cout << "Enter element to find: ";
+                cin >> felement;
+                p.find(list_choice, felement);
+                break;
+
+            case 5:
+                cout << "Enter list number to find size (1 or 2): ";
+                cin >> list_choice;
+                p.size(list_choice);
+                break;
+                
+            case 6:
+            	p.intersection();
+            	break;
+            	
+            case 7:
+            	p.unnion();
+            	break;
+            	
+            case 8:
+            	p.difference();
+            	break;
+            	
+            case 9:
+            	p.subset();
+            	break;
+            	
+            case 10:
+                cout << "Exiting program.\n";
+                break;
+
+            default:
+                cout << "Invalid choice! Try again.\n";
+                break;
+        }
+
+        if (choice != 10) {
+            cout << "\nDo you want to continue? (y/n): ";
+            cin >> ch;
+        }
+		else {
+        	ch="n";
+        }
+    } while (ch == "y");
+    return 0;
+}
