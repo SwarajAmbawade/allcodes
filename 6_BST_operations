@@ -1,0 +1,108 @@
+#include <iostream>
+using namespace std;
+
+class TreeNode {
+    public:
+        int value;
+        TreeNode *leftChild, *rightChild;
+        
+        TreeNode(int val) {
+            value = val;
+            leftChild = rightChild = NULL;
+        }
+};
+
+TreeNode* insertNode(TreeNode* root, int val) {
+    if (root == NULL) return new TreeNode(val);
+    if (val < root->value) root->leftChild = insertNode(root->leftChild, val);
+    else root->rightChild = insertNode(root->rightChild, val);
+    return root;
+}
+
+void inorder(TreeNode* root) {
+    if (!root) return;
+    inorder(root->leftChild);
+    cout << root->value << " ";
+    inorder(root->rightChild);
+}
+
+bool searchNode(TreeNode* root, int key) {
+    if (!root) return false;
+    if (root->value == key) return true;
+    return key < root->value ? searchNode(root->leftChild, key) : searchNode(root->rightChild, key);
+}
+
+int findMin(TreeNode* root) {
+    if (!root) return -1;
+    while (root->leftChild) root = root->leftChild;
+    return root->value;
+}
+
+int longestPathNodes(TreeNode* root) {
+    if (!root) return 0;
+    return max(longestPathNodes(root->leftChild), longestPathNodes(root->rightChild)) + 1;
+}
+
+void mirrorTree(TreeNode* root) {
+    if (!root) return;
+    swap(root->leftChild, root->rightChild);
+    mirrorTree(root->leftChild);
+    mirrorTree(root->rightChild);
+}
+
+int main() {
+    TreeNode* root = NULL;
+    int val;
+    
+    cout << "Enter values to insert into BST (-1 to stop): " << endl;
+    while (true) {
+        cin >> val;
+        if (val == -1) break;
+        root = insertNode(root, val);
+    }
+    
+    int choice;
+    do {
+        cout << "\nMENU:\n";
+        cout << "1. Inorder Traversal\n";
+        cout << "2. Search Node\n";
+        cout << "3. Find Minimum Value\n";
+        cout << "4. Find Longest Path (Height)\n";
+        cout << "5. Mirror the Tree\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                cout << "Inorder Traversal: ";
+                inorder(root);
+                cout << endl;
+                break;
+            case 2:
+                cout << "Enter value to search: ";
+                cin >> val;
+                cout << (searchNode(root, val) ? "Found" : "Not Found") << endl;
+                break;
+            case 3:
+                cout << "Minimum Value: " << findMin(root) << endl;
+                break;
+            case 4:
+                cout << "Number of nodes in longest path: " << longestPathNodes(root) << endl;
+                break;
+            case 5:
+                mirrorTree(root);
+                cout << "Tree mirrored!\nInorder traversal after mirroring: ";
+                inorder(root);
+                cout << endl;
+                break;
+            case 6:
+                cout << "Exiting..." << endl;
+                break;
+            default:
+                cout << "Invalid choice, try again." << endl;
+        }
+    } while (choice != 6);
+    
+    return 0;
+}
